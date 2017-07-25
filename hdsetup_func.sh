@@ -18,15 +18,16 @@ function print_fail {
 function backup_file {
     path=$1
     file=$(basename $path)
-    echo -n "Backing up $path..."
+    backupdir=$2
+    echo -n "Backup $path... "
 
-    if [[ -e "$BACKUP_DIR/$file" ]]; then
+    if [[ -e "$backupdir/$file" ]]; then
         print_skip
     elif [[ -e "$path" ]]; then
-        cp $path $BACKUP_DIR/$file > /dev/null
+        cp $path $backupdir/$file > /dev/null
         print_ok
     else
-        echo -n "could not copy $file"
+        echo -n "could not copy $file into $backupdir"
         print_fail
     fi
 }
@@ -50,3 +51,31 @@ function add_line {
     fi
 }
 
+
+function apply_subst {
+    # Applies a substitution to a given file, and update with an optional status
+    # usage: apply_subst regexp subst file [status]
+    regexp=$1
+    subst=$2
+    file=$3
+    if [[ -z $4 ]]; then
+        status="Replacing pattern '$regexp' with '$subst' in '$file'"
+    else
+        status=$4
+    fi
+
+    echo -n "$status"
+    # check to see if the pattern is even in the file
+    grep "$file" -e "$regexp" > /dev/null
+    if [[ $? -ne '0' ]]; then
+        # if not then continue
+        print_skip
+    else
+        full_subst="s/$regexp/$(echo $subst | sed -e 's/[\/&]/\\&/g')/g"
+        tmpfile=tmp_$(basename $file)
+        cp $file $tmpfile
+        sed "$full_subst" < $tmpfile > $file
+        rm $tmpfile
+        print_ok
+    fi
+}

@@ -6,8 +6,10 @@ BACKUP_DIR=./backup/setup
 SYSFILES=("/etc/fstab" "/etc/sysctl.conf")
 
 
-mkdir -p $BACKUP_DIR
+group=sys
+
+mkdir -p $BACKUP_DIR/$group
 
 for file in ${SYSFILES[*]}; do
-    backup_file $file
+    backup_file $file $BACKUP_DIR/$group
 done
