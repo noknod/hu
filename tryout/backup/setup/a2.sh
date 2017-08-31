@@ -58,8 +58,6 @@ fi
 
 if [[ -d $HADOOP_INSTALL_DIR'/'$HADOOP_VERSION ]]; then
     echo 'Hadoop already installed in '$HADOOP_INSTALL_DIR/$HADDOP_VERSION
-    echo ''
-    echo ''
 else
     echo 'Hadoop will be installed in '$HADOOP_INSTALL_DIR/$HADOOP_VERSION
     echo ''
@@ -75,29 +73,6 @@ else
     echo 'Extracting tar archive'
     echo ''
     tar xf hadoop-$HADOOP_VERSION.tar.gz
-    rm hadoop-$HADOOP_VERSION.tar.gz   
-    mkdir -p hadoop_tmp/hdfs/namenode
-    mkdir -p hadoop_tmp/hdfs/datanode
+    rm hadoop-$HADOOP_VERSION.tar.gz
 EOF
-    echo ''
-    echo ''
 fi
-
-
-source ./hdsetup_func.sh
-
-echo "Disabling ipv6"
-echo ''
-
-sudo bash << EOF
-source ./hdsetup_func.sh
-add_line "# disable ipv6" "/etc/sysctl.conf"
-add_line "net.ipv6.conf.all.disable_ipv6 = 1" "/etc/sysctl.conf"
-add_line "net.ipv6.default.disable_ipv6 = 1" "/etc/sysctl.conf"
-add_line "net.core.somaxconn = 1024" "/etc/sysctl.conf"
-EOF
-
-echo ''
-echo ''
-
-
